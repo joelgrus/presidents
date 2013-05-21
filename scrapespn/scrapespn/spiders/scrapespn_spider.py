@@ -2,11 +2,12 @@ from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.selector import HtmlXPathSelector
 from scrapespn.items import ScrapespnItem
+import re
 
 class ScrapespnSpider(CrawlSpider):
 
-    # it was quicker to see how many pages of results for each president
-    # than to learn enough scrapy to write the logic to stop when there's no new results
+    #it was quicker to see how many pages of results for each president
+    #than to learn enough scrapy to write the logic to stop when there's no new results
     presidents = { 'obama' : 54,
                    'bush' : 22,
                    'clinton' : 5,
@@ -25,8 +26,8 @@ class ScrapespnSpider(CrawlSpider):
                    'wilson' : 0, # false positives
                    'taft' : 1 }
                    
-    name = 'espn.com'
-    allowed_domains = ['espn.com','grantland.com']
+    name = 'espn'
+    allowed_domains = ['espn.com','grantland.com','espn.go.com']
     start_urls = ['http://search.espn.go.com/results?page=' + str(page) + '&searchString=president+' + president + '&dims=5'
                   for president,pages in presidents.iteritems()
                   for page in range(pages)]
@@ -47,7 +48,10 @@ class ScrapespnSpider(CrawlSpider):
         i['URL'] = response
         i['title'] = clean_and_join('//title')
         i['text'] = (clean_and_join('//div[contains(@style, "hidden")]//p') or
-                     clean_and_join('//div[contains(@class, "mod-blog-post")]//div[contains(@class, "mod-content")]//text()'))
+                     clean_and_join('//div[contains(@class, "mod-blog-post")]//div[contains(@class, "mod-content")]//text()') or
+                     clean_and_join('//article[contains(@class, "story")]//p') or
+                     clean_and_join('//div[contains(@class, "article-body")]//p') or
+                     clean_and_join('//div[contains(@class, "post-entry")]'))
         i['date'] = clean_and_join('//div[contains(@class, "date")]//text()')
         return i
  

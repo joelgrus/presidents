@@ -8,4 +8,7 @@ from scrapy.item import Item, Field
 class ScrapespnItem(Item):
     # define the fields for your item here like:
     # name = Field()
-    pass
+    title = Field()
+    URL = Field()
+    text = Field()
+    date = Field()
