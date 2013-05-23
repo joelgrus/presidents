@@ -41,12 +41,17 @@ class ScrapespnSpider(CrawlSpider):
     def parse_item(self, response):
 
         hxs = HtmlXPathSelector(response)
+        
         def clean_and_join(selector):
+            """remove html tags from the results and glue them together"""
             return ' '.join([re.sub('(<[^<]+?>|\n)', '', unicode(line.strip().encode('utf-8'), errors = "ignore")) for line in hxs.select(selector).extract()])
           
         i = ScrapespnItem()
         i['URL'] = response
         i['title'] = clean_and_join('//title')
+        
+        # different types of items have their story text marked up in different ways
+        # the following cases seem to cover all the items in our data
         i['text'] = (clean_and_join('//div[contains(@style, "hidden")]//p') or
                      clean_and_join('//div[contains(@class, "mod-blog-post")]//div[contains(@class, "mod-content")]//text()') or
                      clean_and_join('//article[contains(@class, "story")]//p') or

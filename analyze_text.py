@@ -11,8 +11,6 @@ from collections import defaultdict
 
 JSON_FILE = 'scrapespn/items.json'
 
-from nltk.tokenize import word_tokenize, sent_tokenize
-
 white_presidents = set(['bush','clinton','reagan','carter','ford','nixon','kennedy',    
                         'eisenhower','truman','roosevelt','coolidge','taft'])
 non_white_presidents = set(['obama'])
